@@ -1,0 +1,23 @@
+{
+  "name": "ludum-dare-45",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:andrenanninga/ludum-dare-45.git",
+  "author": "André Nanninga <andre@nannin.ga>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "parcel ./static/index.html --out-dir dist",
+    "build": "parcel build ./static/index.html --out-dir dist"
+  },
+  "dependencies": {
+    "orbit-controls-es6": "^2.0.1",
+    "parcel": "^1.12.3",
+    "three": "0.108.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.103.2",
+    "parcel-bundler": "^1.12.3",
+    "ts-toolbelt": "^4.7.24",
+    "typescript": "^3.6.3"
+  }
+}
