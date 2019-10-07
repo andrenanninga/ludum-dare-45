@@ -10,11 +10,14 @@
     "build": "parcel build ./static/index.html --out-dir dist"
   },
   "dependencies": {
+    "keycode": "^2.2.0",
+    "matter-js": "^0.14.2",
     "orbit-controls-es6": "^2.0.1",
     "parcel": "^1.12.3",
     "three": "0.108.0"
   },
   "devDependencies": {
+    "@types/matter-js": "^0.10.3",
     "@types/three": "^0.103.2",
     "parcel-bundler": "^1.12.3",
     "ts-toolbelt": "^4.7.24",

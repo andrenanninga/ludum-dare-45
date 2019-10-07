@@ -9,12 +9,13 @@ class MeshTilesetMaterial extends THREE.MeshBasicMaterial {
   columns?: number;
   rows?: number;
 
-  super({ tilesize, ...parameters }: MeshTilesetMaterialParameters) {
-    this.super(parameters);
+  constructor({ tilesize, ...parameters }: MeshTilesetMaterialParameters) {
+    super(parameters);
 
     this.tilesize = tilesize;
-    this.rows = this.map.image.width / this.tilesize;
-    this.columns = this.map.image.height / this.tilesize;
+    this.rows = this.map.image.height / this.tilesize;
+    this.columns = this.map.image.width / this.tilesize;
+    this.vertexColors = THREE.FaceColors;
   }
 }
 

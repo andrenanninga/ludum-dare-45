@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { MeshTilesetMaterial } from "./MeshTilesetMaterial";
+import { Game } from "../Game";
 
 const BLEED = 0.001;
 const CORNERS = [
@@ -6,27 +8,37 @@ const CORNERS = [
   [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }]
 ];
 
-const createTile = ({
-  index,
-  material,
-  tilesize
-}: {
-  index: number;
-  material: THREE.MeshBasicMaterial;
-  tilesize: number;
-}) => {
-  const geometry = new THREE.PlaneGeometry(1, 1);
+const FLAG_FLIPPED_HORIZONTAL = 0x80000000;
+const FLAG_FLIPPED_VERTICAL = 0x40000000;
+const FLAG_FLIPPED_DIAGONAL = 0x20000000;
 
-  const columns = material.map.image.width / tilesize;
-  const rows = material.map.image.height / tilesize;
+const createTile = (material: MeshTilesetMaterial, index: number) => {
+  const geometry = new THREE.PlaneGeometry(Game.TILE, Game.TILE);
+  const mesh = new THREE.Mesh(geometry, material);
+
+  updateTile(mesh, index);
+  return mesh;
+};
+
+const updateTile = (mesh: THREE.Mesh, index: number) => {
+  const geometry = mesh.geometry as THREE.PlaneGeometry;
+  const material = mesh.material as MeshTilesetMaterial;
+
+  const tile =
+    index &
+    ~(FLAG_FLIPPED_HORIZONTAL | FLAG_FLIPPED_VERTICAL | FLAG_FLIPPED_DIAGONAL);
+
+  const isFlippedHorizontal = !!(index & FLAG_FLIPPED_HORIZONTAL);
+  const isFlippedVertical = !!(index & FLAG_FLIPPED_VERTICAL);
+  const isFlippedDiagonal = !!(index & FLAG_FLIPPED_DIAGONAL);
 
   const size = new THREE.Vector2(
-    1 / columns - BLEED * 2,
-    -1 / rows + BLEED * 2
+    1 / material.columns - BLEED * 2,
+    -1 / material.rows + BLEED * 2
   );
   const uv = new THREE.Vector2(
-    (index % columns) / columns + BLEED,
-    1 - (Math.floor(index / columns) + 1) / rows + BLEED
+    (tile % material.columns) / material.columns + BLEED,
+    1 - (Math.floor(tile / material.columns) + 1) / material.rows + BLEED
   );
 
   geometry.faceVertexUvs[0].forEach((face, i) => {
@@ -36,8 +48,16 @@ const createTile = ({
     });
   });
 
-  const mesh = new THREE.Mesh(geometry, material);
-  return mesh;
+  geometry.uvsNeedUpdate = true;
+
+  const scale = new THREE.Vector2(1, 1);
+
+  scale.x = isFlippedHorizontal ? -1 : 1;
+  scale.y = isFlippedVertical ? -1 : 1;
+
+  mesh.rotation.z = isFlippedDiagonal ? Math.PI / 2 : 0;
+  mesh.scale.setX(isFlippedDiagonal ? -scale.y : scale.x);
+  mesh.scale.setY(isFlippedDiagonal ? scale.x : scale.y);
 };
 
-export { createTile };
+export { createTile, updateTile };
